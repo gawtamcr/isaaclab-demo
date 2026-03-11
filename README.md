@@ -11,7 +11,7 @@ Isaac Sim needs NVIDIA graphics/Vulkan driver libraries inside the container, no
 ## Build
 
 ```bash
-docker build -t isaaclab-demo ./isaac
+docker build -t isaaclab .
 ```
 
 ## Run on WSL2
@@ -30,7 +30,7 @@ docker run --rm -it \
 	-v /tmp/.X11-unix:/tmp/.X11-unix:rw \
 	-v /mnt/wslg:/mnt/wslg:rw \
 	-v "$PWD":/workspace \
-	isaaclab-demo
+	isaaclab
 ```
 
 For headless test runs, the critical part is still `NVIDIA_DRIVER_CAPABILITIES=all` or at least `graphics,display,video,compute,utility`.
