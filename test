@@ -1,0 +1,28 @@
+# Pulling the specific Isaac Lab version requested
+FROM nvcr.io/nvidia/isaac-lab:2.3.2 AS base
+
+LABEL description="Isaac Lab 2.3.2 for WSL2 with CUDA 13 Integration"
+
+# Set non-interactive to avoid hanging during build
+ENV DEBIAN_FRONTEND=noninteractive
+ENV ISAACLAB_PATH=/workspace/isaaclab
+
+USER root
+
+# Ensure system dependencies are present for WSL2 GL rendering
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libvulkan1 \
+    libvulkan-dev \
+    vulkan-tools \
+    kmod \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Upgrade internal PyTorch to align with CUDA 13 (if version mismatch occurs)
+# Isaac Lab uses a bundled python environment. We target that specifically.
+RUN ./isaaclab.sh -p -m pip install --upgrade torch torchvision torchaudio \
+    --index-url https://download.pytorch.org/whl/cu130
+
+WORKDIR ${ISAACLAB_PATH}
+
+# Set the default entrypoint to the Isaac Lab shell script
+ENTRYPOINT ["/bin/bash", "./isaaclab.sh"]
